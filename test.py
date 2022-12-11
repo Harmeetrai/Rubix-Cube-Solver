@@ -6,7 +6,8 @@ rubix_cube.print_cube()
 
 # test cases
 def test_is_solved():
-    assert rubix_cube.is_solved() == 1
-    rubix_cube.solve()
+    assert rubix_cube.is_solved() == 0
+    # rubix_cube.solve()
     assert rubix_cube.is_solved() == 0
     
+test_is_solved()
