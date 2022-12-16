@@ -10,6 +10,8 @@ class korf(object):
         self.depth_max = depth_max
         self.maxthresh = depth_max
         self.minthresh = None
+        self.heuristic = heuristic
+
         self.moves = []
 
     # search for the solution
@@ -20,7 +22,7 @@ class korf(object):
             if status:
                 return self.moves
             self.moves = []
-            self.thresh = self.minthresh
+            self.threshold = self.min_threshold
         return []
 
     def search(self, state, cost_curr_node):
@@ -31,15 +33,15 @@ class korf(object):
             return False
         min_value = float('inf')
         best_act = None
-        for a in [(r, n, d) for r in ['hor_twist', 'ver_twist', 'side_twist'] for d in [0, 1] for n in range(rubixcube.n)]:
-            rubixcube = RubixCube(state=state)
-            if a[0] == 'hor_twist':
-                rubixcube.horizontal_twist(a[1], a[2])
-            if a[0] == 'ver_twist':
-                rubixcube.vertical_twist(a[1], a[2])
-            if a[0] == 'side_twist':
-                rubixcube.side_twist(a[1], a[2])
-            if rubixcube.solved():
+        for a in [(r, n, d) for r in ['h', 'v', 's'] for d in [0, 1] for n in range(cube.n)]:
+            cube = RubixCube(state=state)
+            if a[0] == 'h':
+                cube.horizontal_twist(a[1], a[2])
+            elif a[0] == 'v':
+                cube.vertical_twist(a[1], a[2])
+            elif a[0] == 's':
+                cube.side_twist(a[1], a[2])
+            if cube.is_solved():
                 self.moves.append(a)
                 return True
             rubixcube_str = rubixcube.stringify()
@@ -70,7 +72,7 @@ def heuristic_db(state, actions, max_moves=20, heuristic=None):
         heuristic = {state: 0}
     queue = [(state, 0)]
     num_nodes = sum([len(actions) ** (x + 1) for x in range(max_moves + 1)])
-    with tqdm(total=num_nodes, desc='HeurDB') as HeurDB:
+    with tqdm(total=num_nodes, desc='Heuristic DB') as HeurDB:
         while True:
             if not queue:
                 break

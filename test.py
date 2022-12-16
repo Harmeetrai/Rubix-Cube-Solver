@@ -1,13 +1,29 @@
-# test the functionally of the solver by comparing the output of the solver with the solved cube
+import time
 from rubix_cube import RubixCube
+from korf_solver import korf, heuristic_db
 
-rubix_cube = RubixCube(n=3)
-rubix_cube.print_cube()
+# Create an instance of the korf class
+kociemba = korf(heuristic_db)
 
-# test cases
-def test_is_solved():
-    assert rubix_cube.is_solved() == 0
-    # rubix_cube.solve()
-    assert rubix_cube.is_solved() == 0
-    
-test_is_solved()
+# Create an instance of the RubixCube class
+cube = RubixCube()
+
+# Shuffle the cube
+cube.shuffle()
+
+# Test different values of max_moves
+for max_moves in range(5, 25):
+    # Start timer
+    start = time.time()
+
+    # Use the Kociemba algorithm to solve the Rubik's cube
+    moves = kociemba.run(cube.stringify(), max_moves)
+
+    # Print the sequence of moves needed to solve the cube
+    print(f"max_moves = {max_moves}: moves = {moves}")
+
+    # End timer
+    end = time.time()
+
+    # Print elapsed time
+    print(f"Elapsed time: {end - start} seconds")

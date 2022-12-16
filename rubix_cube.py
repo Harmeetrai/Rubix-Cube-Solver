@@ -6,8 +6,7 @@ class RubixCube:
     def __init__(
         self,
         n=3,  # n*n*n size rubik's Cube
-        colours=['white', 'orange', 'green ', 'red', 'blue',
-                 'yellow'],    # colors for each face of the cube
+        colours=['w', 'o', 'g', 'r', 'b', 'y'],
         state=None,  # string represent the curr stat of the cube
     ):
         if state is None:
