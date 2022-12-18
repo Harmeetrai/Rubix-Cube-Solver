@@ -1,18 +1,18 @@
 import json
 import os.path
 
-from rubix_cube import RubixCube
+from rubix_cube import RubiksCube
 from korf_solver import korf, heuristic_db
-
 
 MAX_MOVES = 5
 NEW_HEURISTICS = False
 HEURISTIC_FILE = 'heuristic.json'
 
-h_db = None
-
-rubix_cube = RubixCube(n=3)
-rubix_cube.print_cube()
+# --------------------------------
+cube = RubiksCube(n=3)
+cube.show()
+print('-----------')
+# --------------------------------
 
 if os.path.exists(HEURISTIC_FILE):
     with open(HEURISTIC_FILE) as f:
@@ -22,9 +22,9 @@ else:
 
 if h_db is None or NEW_HEURISTICS is True:
     actions = [(r, n, d) for r in ['h', 'v', 's']
-               for d in [0, 1] for n in range(rubix_cube.n)]
+               for d in [0, 1] for n in range(cube.n)]
     h_db = heuristic_db(
-        rubix_cube.stringify(),
+        cube.stringify(),
         actions,
         max_moves=MAX_MOVES,
         heuristic=h_db
@@ -37,25 +37,23 @@ if h_db is None or NEW_HEURISTICS is True:
             ensure_ascii=False,
             indent=4
         )
-# ---------------------------
-
-# shuffle the cube
-rubix_cube.shuffle()
-
-print()
-rubix_cube.print_cube()
-
-# solver the cube
-solve = korf(h_db)
-moves = solve.run(rubix_cube.stringify())
+# --------------------------------
+cube.shuffle(
+    l_rot=MAX_MOVES if MAX_MOVES < 5 else 5,
+    u_rot=MAX_MOVES
+)
+cube.show()
+print('----------')
+# --------------------------------
+solver = korf(h_db)
+moves = solver.run(cube.stringify())
 print(moves)
 
 for m in moves:
     if m[0] == 'h':
-        rubix_cube.horizontal_twist(m[1], m[2])
+        cube.horizontal_twist(m[1], m[2])
     elif m[0] == 'v':
-        rubix_cube.vertical_twist(m[1], m[2])
+        cube.vertical_twist(m[1], m[2])
     elif m[0] == 's':
-        rubix_cube.side_twist(m[1], m[2])
-rubix_cube.print_cube()
-# python3 .\main.py
+        cube.side_twist(m[1], m[2])
+cube.show()
