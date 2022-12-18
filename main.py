@@ -1,16 +1,16 @@
 import json
 import os.path
 
-from rubix_cube import RubixCube
-from korf_solver import korf, heuristic_db
+from rubik_cube import
+from korf_solver import IDA_star, build_heuristic_db
 
 MAX_MOVES = 5
 NEW_HEURISTICS = False
 HEURISTIC_FILE = 'heuristic.json'
 
 # --------------------------------
-cube = RubixCube(n=3)
-cube.print_cube()
+cube = RubiksCube(n=3)
+cube.show()
 print('-----------')
 # --------------------------------
 
@@ -23,7 +23,7 @@ else:
 if h_db is None or NEW_HEURISTICS is True:
     actions = [(r, n, d) for r in ['h', 'v', 's']
                for d in [0, 1] for n in range(cube.n)]
-    h_db = heuristic_db(
+    h_db = build_heuristic_db(
         cube.stringify(),
         actions,
         max_moves=MAX_MOVES,
@@ -38,11 +38,14 @@ if h_db is None or NEW_HEURISTICS is True:
             indent=4
         )
 # --------------------------------
-cube.shuffle()
-cube.print_cube()
+cube.shuffle(
+    l_rot=MAX_MOVES if MAX_MOVES < 5 else 5,
+    u_rot=MAX_MOVES
+)
+cube.show()
 print('----------')
 # --------------------------------
-solver = korf(h_db)
+solver = IDA_star(h_db)
 moves = solver.run(cube.stringify())
 print(moves)
 
@@ -53,4 +56,4 @@ for m in moves:
         cube.vertical_twist(m[1], m[2])
     elif m[0] == 's':
         cube.side_twist(m[1], m[2])
-cube.print_cube()
+cube.show()
