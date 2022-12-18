@@ -1,18 +1,16 @@
 from random import choice
 
 from tqdm import tqdm
-from rubix_cube import RubixCube
+from rubix_cube import RubiksCube
 
 
 class korf(object):
-    def __init__(self, heuristic, depth_max=20):
-        """pass"""
-        self.depth_max = depth_max
-        self.maxthresh = depth_max
-        self.minthresh = None
+    def __init__(self, heuristic, max_depth=20):
+        self.max_depth = max_depth
+        self.threshold = max_depth
+        self.min_threshold = None
+        self.heuristic = heuristic
         self.moves = []
-
-    # search for the solution
 
     def run(self, state):
         while True:
@@ -20,46 +18,45 @@ class korf(object):
             if status:
                 return self.moves
             self.moves = []
-            self.thresh = self.minthresh
+            self.threshold = self.min_threshold
         return []
 
-    def search(self, state, cost_curr_node):
-        rubixcube = RubixCube(state=state)
-        if rubixcube.is_solved():
+    def search(self, state, g_score):
+        cube = RubiksCube(state=state)
+        if cube.solved():
             return True
-        elif len(self.moves) >= self.thresh:
+        elif len(self.moves) >= self.threshold:
             return False
-        min_value = float('inf')
-        best_act = None
-        for a in [(r, n, d) for r in ['hor_twist', 'ver_twist', 'side_twist'] for d in [0, 1] for n in range(rubixcube.n)]:
-            rubixcube = RubixCube(state=state)
-            if a[0] == 'hor_twist':
-                rubixcube.horizontal_twist(a[1], a[2])
-            if a[0] == 'ver_twist':
-                rubixcube.vertical_twist(a[1], a[2])
-            if a[0] == 'side_twist':
-                rubixcube.side_twist(a[1], a[2])
-            if rubixcube.solved():
+        min_val = float('inf')
+        best_action = None
+        for a in [(r, n, d) for r in ['h', 'v', 's'] for d in [0, 1] for n in range(cube.n)]:
+            cube = RubiksCube(state=state)
+            if a[0] == 'h':
+                cube.horizontal_twist(a[1], a[2])
+            elif a[0] == 'v':
+                cube.vertical_twist(a[1], a[2])
+            elif a[0] == 's':
+                cube.side_twist(a[1], a[2])
+            if cube.solved():
                 self.moves.append(a)
                 return True
-            rubixcube_str = rubixcube.stringify()
-            heuristic_score = self.heuristic[rubixcube_str] if rubixcube_str in self.heuristic else self.depth_max
-            final_score = cost_curr_node + heuristic_score
-            if final_score < min_value:
-                min_value = final_score
-                best_act = [(rubixcube_str, a)]
-            elif final_score == min_value:
-                if best_act is None:
-                    best_act = [(rubixcube_str, a)]
+            cube_str = cube.stringify()
+            h_score = self.heuristic[cube_str] if cube_str in self.heuristic else self.max_depth
+            f_score = g_score + h_score
+            if f_score < min_val:
+                min_val = f_score
+                best_action = [(cube_str, a)]
+            elif f_score == min_val:
+                if best_action is None:
+                    best_action = [(cube_str, a)]
                 else:
-                    best_act.append((rubixcube_str, a))
-
-        if best_act is not None:
-            if self.minthresh is None or min_value < self.minthresh:
-                self.minthresh = min_value
-            next_act = choice(best_act)
-            self.moves.append(next_act[1])
-            status = self.search(next_act[0], cost_curr_node + min_value)
+                    best_action.append((cube_str, a))
+        if best_action is not None:
+            if self.min_threshold is None or min_val < self.min_threshold:
+                self.min_threshold = min_val
+            next_action = choice(best_action)
+            self.moves.append(next_action[1])
+            status = self.search(next_action[0], g_score + min_val)
             if status:
                 return status
         return False
@@ -68,26 +65,26 @@ class korf(object):
 def heuristic_db(state, actions, max_moves=20, heuristic=None):
     if heuristic is None:
         heuristic = {state: 0}
-    queue = [(state, 0)]
-    num_nodes = sum([len(actions) ** (x + 1) for x in range(max_moves + 1)])
-    with tqdm(total=num_nodes, desc='HeurDB') as HeurDB:
+    que = [(state, 0)]
+    node_count = sum([len(actions) ** (x + 1) for x in range(max_moves + 1)])
+    with tqdm(total=node_count, desc='Heuristic DB') as pbar:
         while True:
-            if not queue:
+            if not que:
                 break
-            s, d = queue.pop()
+            s, d = que.pop()
             if d > max_moves:
                 continue
             for a in actions:
-                rubixcube = RubixCube(state=s)
-                if a[0] == 'hor_twist':
-                    rubixcube.horizontal_twist(a[1], a[2])
-                if a[0] == 'ver_twist':
-                    rubixcube.vertical_twist(a[1], a[2])
-                if a[0] == 'side_twist':
-                    rubixcube.side_twist(a[1], a[2])
-                a_str = rubixcube.stringify()
+                cube = RubiksCube(state=s)
+                if a[0] == 'h':
+                    cube.horizontal_twist(a[1], a[2])
+                elif a[0] == 'v':
+                    cube.vertical_twist(a[1], a[2])
+                elif a[0] == 's':
+                    cube.side_twist(a[1], a[2])
+                a_str = cube.stringify()
                 if a_str not in heuristic or heuristic[a_str] > d + 1:
                     heuristic[a_str] = d + 1
-                queue.append((a_str, d + 1))
-                HeurDB.update(1)
+                que.append((a_str, d+1))
+                pbar.update(1)
     return heuristic
