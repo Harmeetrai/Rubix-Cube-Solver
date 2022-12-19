@@ -1,10 +1,11 @@
 import json
 import os.path
+import time
 
 from rubix_cube import RubiksCube
 from korf_solver import korf, heuristic_db
 
-MAX_MOVES = 5
+MAX_MOVES = 4
 NEW_HEURISTICS = False
 HEURISTIC_FILE = 'heuristic.json'
 
@@ -39,14 +40,16 @@ if h_db is None or NEW_HEURISTICS is True:
         )
 # --------------------------------
 cube.shuffle(
-    l_rot=MAX_MOVES if MAX_MOVES < 5 else 5,
-    u_rot=MAX_MOVES
+   MAX_MOVES
 )
 cube.show()
 print('----------')
 # --------------------------------
+
+start = time.time()
 solver = korf(h_db)
 moves = solver.run(cube.stringify())
+end = time.time()
 print(moves)
 
 for m in moves:
@@ -57,3 +60,4 @@ for m in moves:
     elif m[0] == 's':
         cube.side_twist(m[1], m[2])
 cube.show()
+print(end-start)
