@@ -9,27 +9,27 @@ class RubiksCube:
     def __init__(
         self,
         n=3,
-        colours=['w', 'o', 'g', 'r', 'b', 'y'],
-        state=None
+        sides = ['U', 'L', 'F', 'R', 'B', 'D'],
+        state = None
     ):
         """
         Input: n - integer representing the width and height of the rubiks cube
-               colours - list containing the first letter of ever colour you wish to use (Default = ['w', 'o', 'g', 'r', 'b', 'y']) [OPTIONAL]
+               sides - list containing the first letter of ever colour you wish to use (Default = ['U', 'L', 'F', 'R', 'B', 'D']) [OPTIONAL]
                state - string representing the current state of the rubix cube (Default = None) [OPTIONAL]
         Description: Initialize the rubiks cube
         Output: None
         """
         if state is None:
             self.n = n
-            self.colours = colours
+            self.sides = sides
             self.reset()
         else:
             self.n = int((len(state) / 6) ** (.5))
-            self.colours = []
+            self.sides = []
             self.cube = [[[]]]
             for i, s in enumerate(state):
-                if s not in self.colours:
-                    self.colours.append(s)
+                if s not in self.sides:
+                    self.sides.append(s)
                 self.cube[-1][-1].append(s)
                 if len(self.cube[-1][-1]) == self.n and len(self.cube[-1]) < self.n:
                     self.cube[-1].append([])
@@ -43,7 +43,7 @@ class RubiksCube:
         Output: None
         """
         self.cube = [[[c for x in range(self.n)]
-                      for y in range(self.n)] for c in self.colours]
+                      for y in range(self.n)] for c in self.sides]
 
     def solved(self):
         """
@@ -75,14 +75,14 @@ class RubiksCube:
         """
         return ''.join([i for r in self.cube for s in r for i in s])
 
-    def shuffle(self, l_rot=5, u_rot=100):
+    def shuffle(self, move):
         """
         Input: l_rot - integer representing the lower bounds of amount of moves (Default = 5) [OPTIONAL]
                u_rot - integer representing the upper bounds of amount of moves (Default = 100) [OPTIONAL]
         Description: Shuffles rubiks cube to random solvable state
         Output: None
         """
-        moves = randint(l_rot, u_rot)
+        moves = move
         actions = [
             ('h', 0),
             ('h', 1),
@@ -113,6 +113,33 @@ class RubiksCube:
             1, 5)) for j in range(len(self.cube[0])))
         l3 = '\n'.join(spacing + str(c) for c in self.cube[5])
         print(f'{l1}\n\n{l2}\n\n{l3}')
+
+        strin = ''
+        for x in self.cube[0]:
+            for y in x:
+                for z in y:
+                    strin += z
+        for x in self.cube[3]:
+            for y in x:
+                for z in y:
+                    strin += z
+        for x in self.cube[2]:
+            for y in x:
+                for z in y:
+                    strin += z
+        for x in self.cube[5]:
+            for y in x:
+                for z in y:
+                    strin += z
+        for x in self.cube[1]:
+            for y in x:
+                for z in y:
+                    strin += z
+        for x in self.cube[4]:
+            for y in x:
+                for z in y:
+                    strin += z
+        print(strin)
 
     def horizontal_twist(self, row, direction):
         """
