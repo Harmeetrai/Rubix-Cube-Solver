@@ -2,22 +2,24 @@ from random import randint, choice
 
 
 class RubiksCube:
-    """
-    Class containing the rubiks cube code
-    """
-
+    # Class containing the rubiks cube code
     def __init__(
         self,
-        n=3, # Dimensions of the cube
-        sides = ['U', 'L', 'F', 'R', 'B', 'D'],
-        state = None
+        n=3,  # Dimensions of the cube
+        # List of colors to be used on the sides of the cube
+        sides=['U', 'L', 'F', 'R', 'B', 'D'],
+        state=None  # String representation of the current state of the cube
     ):
         """
-        Input: n - integer representing the width and height of the rubiks cube
-               sides - list containing the first letter of ever colour you wish to use (Default = ['U', 'L', 'F', 'R', 'B', 'D']) [OPTIONAL]
-               state - string representing the current state of the rubix cube (Default = None) [OPTIONAL]
-        Description: Initialize the rubiks cube
-        Output: None
+        Initialize the rubiks cube
+
+        Parameters:
+            n (int): Width and height of the rubiks cube
+            sides (list): List containing the first letter of every color you wish to use (default = ['U', 'L', 'F', 'R', 'B', 'D'])
+            state (str): String representation of the current state of the cube (default = None)
+
+        Returns:
+            None
         """
         if state is None:
             self.n = n
@@ -38,18 +40,26 @@ class RubiksCube:
 
     def reset(self):
         """
-        Input: None
-        Description: Reset the cube to its initial state
-        Output: None
+        Reset the cube to its initial state
+
+        Parameters:
+            None
+
+        Returns:
+            None
         """
         self.cube = [[[c for x in range(self.n)]
                       for y in range(self.n)] for c in self.sides]
 
     def solved(self):
         """
-        Input: None
-        Description: Determine if the cube is solved or not
-        Output: boolean representing if the cube is solved or not
+        Determine if the cube is solved or not
+
+        Parameters:
+            None
+
+        Returns:
+            boolean: True if the cube is solved, False otherwise
         """
         for side in self.cube:
             hold = []
@@ -69,16 +79,25 @@ class RubiksCube:
 
     def stringify(self):
         """
-        Input: None
-        Description: Create string representation of the current state of the cube
-        Output: string representing the cube current state
+        Create string representation of the current state of the cube
+
+        Parameters:
+            None
+
+        Returns:
+            str: String representation of the cube's current state
         """
         return ''.join([i for r in self.cube for s in r for i in s])
 
     def shuffle(self, move):
         """
-        Description: Shuffles rubiks cube to random solvable state
-        Output: None
+        Shuffle the cube
+
+        Parameters:
+            move (int): Number of moves to make
+
+        Returns:
+            None
         """
         moves = move
         actions = [
@@ -99,7 +118,7 @@ class RubiksCube:
             elif a[0] == 's':
                 self.side_twist(j, a[1])
 
-    def show(self): # Display the Rubik's Cube
+    def show(self):  # Display the Rubik's Cube
         spacing = f'{" " * (len(str(self.cube[0][0])) + 2)}'
         l1 = '\n'.join(spacing + str(c) for c in self.cube[0])
         l2 = '\n'.join('  '.join(str(self.cube[i][j]) for i in range(
@@ -109,7 +128,7 @@ class RubiksCube:
 
         # String representation of the cube
         string = ''
-        for x in self.cube[0]: # Acquires the character from the matrices implemented earlier
+        for x in self.cube[0]:  # Acquires the character from the matrices implemented earlier
             for y in x:        # and adds them to a string in the appropriate order
                 for z in y:
                     string += z
@@ -137,10 +156,14 @@ class RubiksCube:
 
     def horizontal_twist(self, row, direction):
         """
-        Input: row - integer representing which row you would like to twist
-               direction - boolean representing if you want to twist right or left [left - 0, right - 1]
-        Description: Twist desired row of rubiks cube
-        Output: None
+        Twist the cube horizontally
+
+        Parameters:
+            row (int): Row to twist
+            direction (int): Direction to twist (0 = left, 1 = right)
+
+        Returns:
+            None
         """
         if row < len(self.cube[0]):
             if direction == 0:  # Twist left
@@ -179,10 +202,14 @@ class RubiksCube:
 
     def vertical_twist(self, column, direction):
         """
-        Input: column - integer representing which column you would like to twist
-               direction - boolean representing if you want to twist up or down [down - 0, up - 1]
-        Description: Twist desired column of rubiks cube
-        Output: None
+        Twist the cube vertically
+
+        Parameters:
+            column (int): Column to twist
+            direction (int): Direction to twist (0 = down, 1 = up)
+
+        Returns:
+            None
         """
         if column < len(self.cube[0]):
             for i in range(len(self.cube[0])):
@@ -225,10 +252,14 @@ class RubiksCube:
 
     def side_twist(self, column, direction):
         """
-        Input: column - integer representing which column you would like to twist
-               direction - boolean representing if you want to twist up or down [down - 0, up - 1]
-        Description: Twist desired side column of rubiks cube
-        Output: None
+        Twist the cube vertically
+
+        Parameters:
+            column (int): Column to twist
+            direction (int): Direction to twist (0 = down, 1 = up)
+
+        Returns:
+            None
         """
         if column < len(self.cube[0]):
             for i in range(len(self.cube[0])):
@@ -265,6 +296,7 @@ class RubiksCube:
                     self.cube[2] = [list(x) for x in zip(
                         *self.cube[2])][::-1]  # Transpose top
         else:
+            # print error message
             print(
                 f'ERROR - desired column outside of rubiks cube range. Please select a column between 0-{len(self.cube[0])-1}')
             return
