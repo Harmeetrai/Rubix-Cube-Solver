@@ -67,7 +67,7 @@ def heuristic_db(state, actions, max_moves=20, heuristic=None):
         heuristic = {state: 0}
     que = [(state, 0)]
     node_count = sum([len(actions) ** (x + 1) for x in range(max_moves + 1)])
-    with tqdm(total=node_count, desc='Heuristic DB') as pbar:
+    with tqdm(total=node_count, desc='Heur DB') as pbar:
         while True:
             if not que:
                 break
