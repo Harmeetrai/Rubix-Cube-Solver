@@ -8,7 +8,7 @@ class RubiksCube:
 
     def __init__(
         self,
-        n=3,
+        n=3, # Dimensions of the cube
         sides = ['U', 'L', 'F', 'R', 'B', 'D'],
         state = None
     ):
@@ -39,7 +39,7 @@ class RubiksCube:
     def reset(self):
         """
         Input: None
-        Description: Reset the cube to its inital state
+        Description: Reset the cube to its initial state
         Output: None
         """
         self.cube = [[[c for x in range(self.n)]
@@ -77,8 +77,6 @@ class RubiksCube:
 
     def shuffle(self, move):
         """
-        Input: l_rot - integer representing the lower bounds of amount of moves (Default = 5) [OPTIONAL]
-               u_rot - integer representing the upper bounds of amount of moves (Default = 100) [OPTIONAL]
         Description: Shuffles rubiks cube to random solvable state
         Output: None
         """
@@ -101,12 +99,7 @@ class RubiksCube:
             elif a[0] == 's':
                 self.side_twist(j, a[1])
 
-    def show(self):
-        """
-        Input: None
-        Description: Show the rubiks cube
-        Output: None
-        """
+    def show(self): # Display the Rubik's Cube
         spacing = f'{" " * (len(str(self.cube[0][0])) + 2)}'
         l1 = '\n'.join(spacing + str(c) for c in self.cube[0])
         l2 = '\n'.join('  '.join(str(self.cube[i][j]) for i in range(
@@ -114,32 +107,33 @@ class RubiksCube:
         l3 = '\n'.join(spacing + str(c) for c in self.cube[5])
         print(f'{l1}\n\n{l2}\n\n{l3}')
 
-        strin = ''
-        for x in self.cube[0]:
-            for y in x:
+        # String representation of the cube
+        string = ''
+        for x in self.cube[0]: # Acquires the character from the matrices implemented earlier
+            for y in x:        # and adds them to a string in the appropriate order
                 for z in y:
-                    strin += z
+                    string += z
         for x in self.cube[3]:
             for y in x:
                 for z in y:
-                    strin += z
+                    string += z
         for x in self.cube[2]:
             for y in x:
                 for z in y:
-                    strin += z
+                    string += z
         for x in self.cube[5]:
             for y in x:
                 for z in y:
-                    strin += z
+                    string += z
         for x in self.cube[1]:
             for y in x:
                 for z in y:
-                    strin += z
+                    string += z
         for x in self.cube[4]:
             for y in x:
                 for z in y:
-                    strin += z
-        print(strin)
+                    string += z
+        print(string)
 
     def horizontal_twist(self, row, direction):
         """
